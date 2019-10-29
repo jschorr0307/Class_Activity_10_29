@@ -4,6 +4,7 @@ title: "Join Data with dplyr"
 
 ```{r setup}
 library(tidyverse)
+#install.packages("nycflights13")
 library(nycflights13)
 
 band <- tribble(
@@ -30,11 +31,11 @@ instrument2 <- tribble(
 
 # nycflights13
 
-```{r}
+```{r include = FALSE}
 View(flights)
 ```
 
-```{r}
+```{r include=FALSE}
 View(airlines)
 ```
 
@@ -42,9 +43,15 @@ View(airlines)
 
 ```{r}
 band %>% left_join(instrument, by = "name")
+#keep everything on the left but only keep what matches on the right
+#band is the left data set, intrument is the right
 band %>% right_join(instrument, by = "name")
+#keep everything on the right and add the stuff that matches on the left
+#band is on the left and instrument is on the right
 band %>% full_join(instrument, by = "name")
+#keeps everything
 band %>% inner_join(instrument, by = "name")
+#only keeps matching rows
 ```
 
 
@@ -60,10 +67,10 @@ Which airlines had the largest arrival delays? Complete the code below.
 ```{r}
 flights %>%
   filter(!is.na(arr_delay)) %>%
-  __________________  %>%
-  group_by(_________) %>%
-  __________________  %>%
-  arrange(__________) 
+  left_join(airlines, by = "carrier")  %>%
+  group_by(name) %>%
+  summarise(delay=median(arr_delay))  %>%
+  arrange(desc(delay)) 
 ```
 
 
@@ -80,10 +87,10 @@ Order by average delay, worst to best.
 ```{r}
 flights %>% 
   filter(!is.na(arr_delay)) %>%
-  ______(airports, __________________) %>%
+  left_join(airports, by = c("dest" = "faa")) %>%
   group_by(name) %>%
-  _________(distance = _____________, delay = _____________) %>%
-  ______(_____(delay))
+  summarise(distance = first(distance), delay = mean(arr_delay)) %>%
+  arrange(desc(delay))
 
 ```
 
@@ -92,7 +99,9 @@ flights %>%
 
 ```{r}
 band %>% semi_join(instrument, by = "name")
+#only keep colums from first data set and only keep what matches in the rows of both
 band %>% anti_join(instrument, by = "name")
+#only keep things that did NOT match in the table
 ```
 
 ## Your Turn 3
@@ -102,8 +111,8 @@ How many airports in `airports` are serviced by flights in `flights`? (i.e. how 
 Notice that the column to join on is named `faa` in the **airports** data set and `dest` in the **flights** data set.
 
 ```{r}
-__________ %>%
-  _____________________________ %>%
+airports %>%
+  semi_join(flights, by = c("faa" = "dest")) %>%
   select(faa)
 ```
 
