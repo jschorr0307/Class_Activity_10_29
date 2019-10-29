@@ -1,0 +1,44 @@
+---
+title: 'igraph: an R Package for Graph Theory'
+author: "Krissi Alari"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+
+## Example
+Create an empty graph and a full with 10 vertices. Then count the vertices and edges and check if verticies 1 and 3 are connected using the **igraph** package. 
+```{r}
+#install.packages("igraph")     Install the igraph package
+library(igraph)                 #Load the package 
+
+#Create the graphs
+e <- graph.empty(n = 10)
+f <- graph.full(n = 10, directed = FALSE)
+f2 <- graph.full(n = 10, directed = TRUE)
+
+#Plot the graphs
+#The vertex.label.dist argument controls how close your label is to the vertex
+#The main argument allows you to give your graph a title
+plot(e, vertex.label.dist = 3, main="Empty Graph")
+
+par( mfrow=c(1,2) )       #Allows you to plot your graphs side by side
+plot(f, vertex.label.dist = 3, main="Undirected")
+plot(f2, vertex.label.dist = 3, main="Directed")
+
+
+#Count the vertices 
+vcount(e)
+vcount(f)
+
+#Count the edges
+ecount(e)
+ecount(f)
+
+#Checks if vertices 1 and 3 are connected
+are.connected(e, V(e)[1], V(e)[3])
+are.connected(f, V(f)[1], V(f)[3])
+```
+

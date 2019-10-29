@@ -1,0 +1,115 @@
+---
+title: "Plotly"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, message=FALSE, echo=FALSE}
+#install.packages("plotly")
+#install.packages("knitr")
+#install.packages("gapminder")
+library(plotly)
+```
+
+```{r echo=FALSE, message=FALSE}
+#plot_ly example
+flowers <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length, color = ~Species)
+flowers
+```
+
+```{r, echo=FALSE}
+#plot_ly example with layout()
+mtcars$am[which(mtcars$am == 0)] <- 'Automatic'
+mtcars$am[which(mtcars$am == 1)] <- 'Manual'
+mtcars$am <- as.factor(mtcars$am)
+
+cars <- plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Weight'),
+                     yaxis = list(title = 'Gross horsepower'),
+                     zaxis = list(title = '1/4 mile time')))
+cars
+```
+
+```{r, echo=FALSE}
+#3D surface example
+p <- plot_ly(z = ~volcano, type = "heatmap", colorscale='Rainbow')
+
+# chart option buttons
+chart_types <- list(
+  type = "buttons",
+  direction = "right",
+  xanchor = 'center',
+  yanchor = "top",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.5,
+  y = 1.27,
+  buttons = list(
+
+    list(method = "restyle",
+         args = list("type", "heatmap"),
+         label = "Heatmap"),
+
+    list(method = "restyle",
+         args = list("type", "contour"),
+         label = "Contour"),
+
+    list(method = "restyle",
+         args = list("type", "surface"),
+         label = "surface")
+  ))
+
+# color option buttons  
+color_types <- list(
+  type = "buttons",
+  direction = "right",
+  xanchor = 'center',
+  yanchor = "top",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.5,
+  y = 1.17,
+  buttons = list(
+
+    list(method = "restyle",
+         args = list("colorscale", "Rainbow"),
+         label = "Rainbow"),
+
+    list(method = "restyle",
+         args = list("colorscale", "Jet"),
+         label = "Jet"),
+
+    list(method = "restyle",
+         args = list("colorscale", "Earth"),
+         label = "Earth"),
+
+    list(method = "restyle",
+         args = list("colorscale", "Electric"),
+         label = "Electric")
+  ))
+
+annot <- list(list(text = "Chart<br>Type", x=0.2, y=1.25, xref='paper', yref='paper', showarrow=FALSE),
+              list(text = "Color<br>Type", x=0.2, y=1.15, xref='paper', yref='paper', showarrow=FALSE))
+
+# plot
+p <- p %>% layout(
+  xaxis = list(domain = c(0.1, 1)),
+  yaxis = list(title = "y"),
+  updatemenus = list(chart_types,color_types),
+  annotations = annot)
+
+p
+```
+
+```{r, warning=FALSE, echo=FALSE}
+#ggplotly() example
+data(gapminder, package = "gapminder")
+gg <- ggplot(gapminder, aes(gdpPercap, lifeExp, color = continent)) +
+  geom_point(aes(size = pop, frame = year, ids = country)) +
+  scale_x_log10()
+ggplotly(gg)
+```
+
+
+
+
